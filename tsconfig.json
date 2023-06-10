@@ -5,11 +5,15 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "outDir": "dist",
-    "rootDir": "./src",
+    "rootDir": "src",
     "pretty": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
 }
