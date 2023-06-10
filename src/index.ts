@@ -17,46 +17,18 @@ export const parse = (jestCode: string) => {
 const extractDescribeAndTestNodes = (node: any): any[] => {
   console.log(node)
   // console.log(JSON.stringify(node, null, 2))
-  let result: any[] = []
 
-  if (node.type === 'CallExpression') {
-    // CallExpression の処理
+  let result = []
+
+  if (node.type === 'CallExpression' || node.type === 'ExpressionStatement') {
     if (
       node.expression.callee.type === 'Identifier' &&
-      node.expression.callee.value === 'describe'
-    ) {
-      result.push(node)
-    } else if (
-      node.expression.callee.type === 'Identifier' &&
-      node.expression.callee.value === 'test'
+      (node.expression.callee.value === 'describe' || node.expression.callee.value === 'test')
     ) {
       result.push(node)
     }
   }
-  if (node.type === 'ExpressionStatement') {
-    // ExpressionStatement の処理
-    if (
-      node.expression.callee.type === 'Identifier' &&
-      node.expression.callee.value === 'describe'
-    ) {
-      result.push(node)
-    } else if (
-      node.expression.callee.type === 'Identifier' &&
-      node.expression.callee.value === 'test'
-    ) {
-      result.push(node)
-    }
-  }
-  // if (node.type === 'Module') {
-  //   // Module の処理
-  //   const bodyNodes = node.body
-  //   for (const bodyNode of bodyNodes) {
-  //     const moduleResult = extractDescribeAndTestNodes(bodyNode)
-  //     result = result.concat(moduleResult)
-  //   }
-  // }
 
-  // 子ノードの処理
   if (node.body) {
     for (const childNode of node.body) {
       const childResult = extractDescribeAndTestNodes(childNode)
@@ -83,4 +55,4 @@ describe('App.vue', () => {
 `
 
 const ast = parse(jestCode)
-console.log(JSON.stringify(ast, null, 2))
+// console.log(JSON.stringify(ast, null, 2))
