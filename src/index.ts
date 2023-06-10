@@ -10,27 +10,39 @@ export const parse = (jestCode: string) => {
   }
 
   const ast = parseSync(jestCode, parseOptions)
-  const describeAndTestNodes = extractDescribeAndTestNodes(ast)
+  // let describeAndTestNodes
+  // // ASTの最上位のノードが Module の場合、その body プロパティから抽出する
+  // if (ast.type === 'Module' && Array.isArray(ast.body)) {
+  //   describeAndTestNodes = extractDescribeAndTestNodes(ast.body)
+  //   console.log('Extracted nodes:', describeAndTestNodes)
+  // } else {
+  //   describeAndTestNodes = extractDescribeAndTestNodes(ast)
+  // }
+  // console.log(JSON.stringify(ast, null, 2))
+  const describeAndTestNodes = extractDescribeAndTestNodes(ast.body[0])
   return describeAndTestNodes
 }
 
 const extractDescribeAndTestNodes = (node: any): any[] => {
-  console.log(node)
-  // console.log(JSON.stringify(node, null, 2))
+  // console.log("呼ばれた")
+  // console.log(node)
+  console.log(JSON.stringify(node, null, 2))
 
-  let result = []
+  let result: any[] = []
 
-  if (node.type === 'CallExpression' || node.type === 'ExpressionStatement') {
-    if (
-      node.expression.callee.type === 'Identifier' &&
-      (node.expression.callee.value === 'describe' || node.expression.callee.value === 'test')
-    ) {
-      result.push(node)
-    }
+  if (
+    node.type === 'ExpressionStatement' &&
+    node.expression.type === 'CallExpression' &&
+    (node.expression.callee.value === 'describe' || node.expression.callee.value === 'test')
+  ) {
+    result.push(node)
+    console.log('Matched node:')
+  } else {
+    console.log('Not a matched node:')
   }
 
-  if (node.body) {
-    for (const childNode of node.body) {
+  if (node.body && node.body.stmts) {
+    for (const childNode of node.body.stmts) {
       const childResult = extractDescribeAndTestNodes(childNode)
       result = result.concat(childResult)
     }
@@ -42,8 +54,7 @@ const extractDescribeAndTestNodes = (node: any): any[] => {
 const jestCode = `
 describe('App.vue', () => {
   test('test 1', () => {
-    const value = "123"
-    expect(value).toBe("123")
+    expect(true).toBe(true)
   })
 
   describe('inner', () => {
