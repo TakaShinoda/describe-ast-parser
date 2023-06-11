@@ -16,7 +16,7 @@ export const parse = (jestCode: string) => {
 const extractDescribeAndTestNodes = (nodes: any): any[] => {
   let result: any[] = []
   for (const node of nodes) {
-      console.log(JSON.stringify(node, null, 2))
+    console.log(JSON.stringify(node, null, 2))
     if (
       node.type === 'ExpressionStatement' &&
       node.expression.type === 'CallExpression' &&
@@ -29,7 +29,6 @@ const extractDescribeAndTestNodes = (nodes: any): any[] => {
       console.log('Not a matched node:')
     }
 
-  
     if (node.body && node.body.stmts) {
       for (const childNode of node.body.stmts) {
         const childResult = extractDescribeAndTestNodes(childNode)
