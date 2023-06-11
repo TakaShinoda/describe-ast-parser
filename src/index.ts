@@ -8,43 +8,33 @@ export const parse = (jestCode: string) => {
     dynamicImport: true,
     decorators: true
   }
-
   const ast = parseSync(jestCode, parseOptions)
-  // let describeAndTestNodes
-  // // ASTの最上位のノードが Module の場合、その body プロパティから抽出する
-  // if (ast.type === 'Module' && Array.isArray(ast.body)) {
-  //   describeAndTestNodes = extractDescribeAndTestNodes(ast.body)
-  //   console.log('Extracted nodes:', describeAndTestNodes)
-  // } else {
-  //   describeAndTestNodes = extractDescribeAndTestNodes(ast)
-  // }
-  // console.log(JSON.stringify(ast, null, 2))
-  const describeAndTestNodes = extractDescribeAndTestNodes(ast.body[0])
+  const describeAndTestNodes = extractDescribeAndTestNodes(ast.body)
   return describeAndTestNodes
 }
 
-const extractDescribeAndTestNodes = (node: any): any[] => {
-  // console.log("呼ばれた")
-  // console.log(node)
-  console.log(JSON.stringify(node, null, 2))
-
+const extractDescribeAndTestNodes = (nodes: any): any[] => {
   let result: any[] = []
+  for (const node of nodes) {
+      console.log(JSON.stringify(node, null, 2))
+    if (
+      node.type === 'ExpressionStatement' &&
+      node.expression.type === 'CallExpression' &&
+      (node.expression.callee.value === 'describe' || node.expression.callee.value === 'test')
+    ) {
+      result.push(node)
+      console.log('Matched node:')
+      // console.log(JSON.stringify(node, null, 2))
+    } else {
+      console.log('Not a matched node:')
+    }
 
-  if (
-    node.type === 'ExpressionStatement' &&
-    node.expression.type === 'CallExpression' &&
-    (node.expression.callee.value === 'describe' || node.expression.callee.value === 'test')
-  ) {
-    result.push(node)
-    console.log('Matched node:')
-  } else {
-    console.log('Not a matched node:')
-  }
-
-  if (node.body && node.body.stmts) {
-    for (const childNode of node.body.stmts) {
-      const childResult = extractDescribeAndTestNodes(childNode)
-      result = result.concat(childResult)
+  
+    if (node.body && node.body.stmts) {
+      for (const childNode of node.body.stmts) {
+        const childResult = extractDescribeAndTestNodes(childNode)
+        result = result.concat(childResult)
+      }
     }
   }
 
@@ -60,6 +50,9 @@ describe('App.vue', () => {
   describe('inner', () => {
     test('test 2', () => {
       expect(42).toEqual(42)
+    })
+    test('test 3', () => {
+      expect(22).toEqual(22)
     })
   })
 })
