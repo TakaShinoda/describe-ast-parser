@@ -41,6 +41,7 @@ const extractDescribeAndTestNodes = (nodes: any): any[] => {
 }
 
 const jestCode = `
+import { App } from './App'
 describe('App.vue', () => {
   test('test 1', () => {
     expect(true).toBe(true)
