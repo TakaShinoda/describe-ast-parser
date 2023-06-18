@@ -1,4 +1,4 @@
-import { parseSync, ParseOptions } from '@swc/core'
+import { parseSync, ParseOptions, ExpressionStatement } from '@swc/core'
 
 export const parse = (jestCode: string) => {
   const parseOptions: ParseOptions = {
@@ -8,19 +8,22 @@ export const parse = (jestCode: string) => {
     dynamicImport: true,
     decorators: true
   }
+
   const ast = parseSync(jestCode, parseOptions)
-  const describeAndTestNodes = extractDescribeAndTestNodes(ast.body)
+  const extractionNodes: ExpressionStatement[] = []
+  const describeAndTestNodes = extractDescribeAndTestNodes(ast.body, extractionNodes)
   return describeAndTestNodes
 }
 
-const extractDescribeAndTestNodes = (nodes: any): any[] => {
-  let result: any[] = []
+const extractDescribeAndTestNodes = (nodes: any[], result: ExpressionStatement[]) => {
   for (const node of nodes) {
-    console.log(JSON.stringify(node, null, 2))
     if (
       node.type === 'ExpressionStatement' &&
       node.expression.type === 'CallExpression' &&
-      (node.expression.callee.value === 'describe' || node.expression.callee.value === 'test')
+      node.expression.callee.type === 'Identifier' &&
+      (node.expression.callee.value === 'describe' || node.expression.callee.value === 'test') &&
+      node.expression.arguments.length &&
+      node.expression.arguments[0].expression.type === 'StringLiteral'
     ) {
       result.push(node)
       console.log('Matched node:')
@@ -30,10 +33,7 @@ const extractDescribeAndTestNodes = (nodes: any): any[] => {
     }
 
     if (node.body && node.body.stmts) {
-      for (const childNode of node.body.stmts) {
-        const childResult = extractDescribeAndTestNodes(childNode)
-        result = result.concat(childResult)
-      }
+      extractDescribeAndTestNodes(node.body.stmts, result)
     }
   }
 
@@ -41,8 +41,15 @@ const extractDescribeAndTestNodes = (nodes: any): any[] => {
 }
 
 const jestCode = `
-import { App } from './App'
+import { App } from './App.vue'
+import { mount } from '@vue/test-utils'
+
 describe('App.vue', () => {
+  test('test App Component', function () {
+    const wrapper = mount(App)
+    expect(wrapper.text()).toBe('Hello World')
+  })
+
   test('test 1', () => {
     expect(true).toBe(true)
   })
@@ -58,5 +65,6 @@ describe('App.vue', () => {
 })
 `
 
-const ast = parse(jestCode)
-// console.log(JSON.stringify(ast, null, 2))
+const resultAst = parse(jestCode)
+console.log(JSON.stringify(resultAst, null, 2))
+
