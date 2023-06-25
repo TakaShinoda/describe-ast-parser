@@ -18,27 +18,29 @@ describe('App.vue', () => {
 })
 `
 
-export function extractTestNodes(jestCode: string): (t.Expression | t.StringLiteral)[] {
+export const parse = (jestCode: string): t.Expression[] => {
   const ast = parser.parse(jestCode, {
     sourceType: 'module',
     plugins: ['jsx']
   })
 
-  const testNodes: (t.Expression | t.StringLiteral)[] = []
-  const visitedNodes = new Set<t.Expression | t.StringLiteral>()
+  const extractionNodes: t.Expression[] = []
+  const visitedNodes = new Set<t.Expression>()
 
-  function traverseCallExpressions(path: NodePath<t.CallExpression>) {
+  const traverseCallExpressions = (path: NodePath<t.CallExpression>) => {
     const { node } = path
     if (
-      t.isIdentifier(node.callee, { name: 'test' }) &&
+      (t.isIdentifier(node.callee, { name: 'describe' }) ||
+        t.isIdentifier(node.callee, { name: 'test' })) &&
       node.arguments.length > 0
     ) {
       const arg = node.arguments[0]
       if (!visitedNodes.has(arg as any)) {
         visitedNodes.add(arg as any)
-        testNodes.push(arg as any)
+        extractionNodes.push(arg as any)
       }
     }
+
     // 引数が関数の場合は再帰的に探索
     path.traverse({
       CallExpression: function (nestedPath: NodePath<t.CallExpression>) {
@@ -51,25 +53,14 @@ export function extractTestNodes(jestCode: string): (t.Expression | t.StringLite
   }
 
   traverse(ast, {
-    CallExpression: traverseCallExpressions,
-    StringLiteral(path: NodePath<t.StringLiteral>) {
-      const { node } = path
-      if (
-        t.isCallExpression(path.parent) &&
-        t.isIdentifier(path.parent.callee, { name: 'describe' }) &&
-        !visitedNodes.has(node)
-      ) {
-        visitedNodes.add(node)
-        testNodes.push(node)
-      }
-    }
+    CallExpression: traverseCallExpressions
   })
 
-  console.log('testNodes')
-  console.log(JSON.stringify(testNodes, null, 2))
-  console.log('testNodes')
+  console.log('extractionNodes')
+  console.log(JSON.stringify(extractionNodes, null, 2))
+  console.log('extractionNodes')
 
-  return testNodes
+  return extractionNodes
 }
 
-extractTestNodes(jestCode)
+parse(jestCode)
