@@ -3,6 +3,7 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2020",
     "module": "CommonJS",
+    // "esModuleInterop": true,
     "moduleResolution": "node",
     "outDir": "dist",
     "rootDir": "src",
