@@ -1,44 +1,6 @@
-import { parseSync, ParseOptions, ExpressionStatement } from '@swc/core'
-
-export const parse = (jestCode: string) => {
-  const parseOptions: ParseOptions = {
-    syntax: 'typescript',
-    target: 'es2020',
-    tsx: true,
-    dynamicImport: true,
-    decorators: true
-  }
-
-  const ast = parseSync(jestCode, parseOptions)
-  const extractionNodes: ExpressionStatement[] = []
-  const describeAndTestNodes = extractDescribeAndTestNodes(ast.body, extractionNodes)
-  return describeAndTestNodes
-}
-
-const extractDescribeAndTestNodes = (nodes: any[], result: ExpressionStatement[]) => {
-  for (const node of nodes) {
-    if (
-      node.type === 'ExpressionStatement' &&
-      node.expression.type === 'CallExpression' &&
-      node.expression.callee.type === 'Identifier' &&
-      (node.expression.callee.value === 'describe' || node.expression.callee.value === 'test') &&
-      node.expression.arguments.length &&
-      node.expression.arguments[0].expression.type === 'StringLiteral'
-    ) {
-      result.push(node)
-      console.log('Matched node:')
-      // console.log(JSON.stringify(node, null, 2))
-    } else {
-      console.log('Not a matched node:')
-    }
-
-    if (node.body && node.body.stmts) {
-      extractDescribeAndTestNodes(node.body.stmts, result)
-    }
-  }
-
-  return result
-}
+import * as parser from '@babel/parser'
+import traverse, { NodePath } from '@babel/traverse'
+import * as t from '@babel/types'
 
 const jestCode = `
 import { App } from './App.vue'
@@ -53,18 +15,52 @@ describe('App.vue', () => {
   test('test 1', () => {
     expect(true).toBe(true)
   })
-
-  describe('inner', () => {
-    test('test 2', () => {
-      expect(42).toEqual(42)
-    })
-    test('test 3', () => {
-      expect(22).toEqual(22)
-    })
-  })
 })
 `
 
-const resultAst = parse(jestCode)
-console.log(JSON.stringify(resultAst, null, 2))
+export const parse = (jestCode: string): t.Expression[] => {
+  const ast = parser.parse(jestCode, {
+    sourceType: 'module',
+    plugins: ['jsx']
+  })
 
+  const extractionNodes: t.Expression[] = []
+  const visitedNodes = new Set<t.Expression>()
+
+  const traverseCallExpressions = (path: NodePath<t.CallExpression>) => {
+    const { node } = path
+    if (
+      (t.isIdentifier(node.callee, { name: 'describe' }) ||
+        t.isIdentifier(node.callee, { name: 'test' })) &&
+      node.arguments.length > 0
+    ) {
+      const arg = node.arguments[0]
+      if (!visitedNodes.has(arg as any)) {
+        visitedNodes.add(arg as any)
+        extractionNodes.push(arg as any)
+      }
+    }
+
+    // 引数が関数の場合は再帰的に探索
+    path.traverse({
+      CallExpression: function (nestedPath: NodePath<t.CallExpression>) {
+        if (!visitedNodes.has(nestedPath.node)) {
+          visitedNodes.add(nestedPath.node)
+          traverseCallExpressions(nestedPath)
+        }
+      }
+    })
+  }
+
+  traverse(ast, {
+    CallExpression: traverseCallExpressions
+  })
+
+  console.log('extractionNodes')
+  console.log(JSON.stringify(extractionNodes, null, 2))
+  console.log('extractionNodes')
+
+  return extractionNodes
+}
+
+parse(jestCode)
