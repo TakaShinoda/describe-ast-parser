@@ -43,6 +43,8 @@ export const parse = (jestCode: string): t.Expression[] => {
   // 指定されたコールバック関数（この場合は traverseCallExpressions 関数）を呼び出す
   // traverseCallExpressions 関数は、CallExpression ノードが見つかるたびに呼び出される
   traverse(ast, {
+    // コールバック関数には現在のノードの情報が渡される、
+    // それを受け取るためのパラメータが  `path: NodePath<t.CallExpression>`
     CallExpression: traverseCallExpressions
   })
 
