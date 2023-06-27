@@ -25,33 +25,23 @@ export const parse = (jestCode: string): t.Expression[] => {
   })
 
   const extractionNodes: t.Expression[] = []
-  const visitedNodes = new Set<t.Expression>()
 
   const traverseCallExpressions = (path: NodePath<t.CallExpression>) => {
     const { node } = path
+
     if (
       (t.isIdentifier(node.callee, { name: 'describe' }) ||
         t.isIdentifier(node.callee, { name: 'test' })) &&
       node.arguments.length > 0
     ) {
       const arg = node.arguments[0]
-      if (!visitedNodes.has(arg as any)) {
-        visitedNodes.add(arg as any)
-        extractionNodes.push(arg as any)
-      }
+      extractionNodes.push(arg as any)
     }
-
-    // 引数が関数の場合は再帰的に探索
-    path.traverse({
-      CallExpression: function (nestedPath: NodePath<t.CallExpression>) {
-        if (!visitedNodes.has(nestedPath.node)) {
-          visitedNodes.add(nestedPath.node)
-          traverseCallExpressions(nestedPath)
-        }
-      }
-    })
   }
 
+  // traverse 関数は、AST のノードを再帰的に走査し、指定したノードタイプにマッチするノードが見つかるたびに
+  // 指定されたコールバック関数（この場合は traverseCallExpressions 関数）を呼び出す
+  // traverseCallExpressions 関数は、CallExpression ノードが見つかるたびに呼び出される
   traverse(ast, {
     CallExpression: traverseCallExpressions
   })
