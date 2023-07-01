@@ -2,22 +2,6 @@ import * as parser from '@babel/parser'
 import traverse, { NodePath } from '@babel/traverse'
 import * as t from '@babel/types'
 
-const jestCode = `
-import { App } from './App.vue'
-import { mount } from '@vue/test-utils'
-
-describe('App.vue', () => {
-  test('test App Component', function () {
-    const wrapper = mount(App)
-    expect(wrapper.text()).toBe('Hello World')
-  })
-
-  test('test 1', () => {
-    expect(true).toBe(true)
-  })
-})
-`
-
 export const parse = (jestCode: string): t.Expression[] => {
   const ast = parser.parse(jestCode, {
     sourceType: 'module',
@@ -48,11 +32,5 @@ export const parse = (jestCode: string): t.Expression[] => {
     CallExpression: traverseCallExpressions
   })
 
-  console.log('extractionNodes')
-  console.log(JSON.stringify(extractionNodes, null, 2))
-  console.log('extractionNodes')
-
   return extractionNodes
 }
-
-parse(jestCode)

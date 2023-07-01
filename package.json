@@ -8,8 +8,12 @@
     "build": "tsc &&  babel src --out-dir dist",
     "format": "prettier --write --ignore-path .gitignore './**/*.{js,ts}'"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "jest",
+    "ast",
+    "parser"
+  ],
+  "author": "TakaShinoda <qqgm3rk9k@gmail.com>",
   "license": "MIT",
   "repository": "https://github.com/TakaShinoda/describe-ast-parser",
   "devDependencies": {
