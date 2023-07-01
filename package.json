@@ -1,5 +1,5 @@
 {
-  "name": "jest-ast-parser",
+  "name": "describe-ast-parser",
   "version": "0.0.1",
   "description": "Parses jest code to AST and extract nodes with `describe` and `test`",
   "main": "dist/index.js",

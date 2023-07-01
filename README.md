@@ -8,7 +8,7 @@ Parses jest code to AST and extract nodes with `describe` and `test`
 ## Install
 
 ```
-npm i jest-ast-parser
+npm i describe-ast-parser
 ```
 
 
