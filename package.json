@@ -33,6 +33,7 @@
   "peerDependencies": {
     "@babel/parser": "^7.22.5",
     "@babel/traverse": "^7.22.5",
-    "@babel/types": "^7.22.5"
+    "@babel/types": "^7.22.5",
+    "@types/babel__traverse": "^7.20.1"
   }
 }
