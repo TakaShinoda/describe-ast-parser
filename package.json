@@ -1,6 +1,6 @@
 {
   "name": "describe-ast-parser",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Parses jest code to AST and extract nodes with `describe` and `test`",
   "main": "dist/index.js",
   "types": "src/index.ts",
