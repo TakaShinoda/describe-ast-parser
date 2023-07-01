@@ -1,6 +1,6 @@
 {
   "name": "jest-ast-parser",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
   "type": "commonjs",
@@ -11,6 +11,7 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "repository": "https://github.com/TakaShinoda/describe-ast-parser",
   "devDependencies": {
     "@babel/cli": "^7.22.5",
     "@babel/core": "^7.22.5",
