@@ -1,7 +1,7 @@
 {
   "name": "jest-ast-parser",
   "version": "0.0.1",
-  "description": "",
+  "description": "Parses jest code to AST and extract nodes with `describe` and `test`",
   "main": "dist/index.js",
   "type": "commonjs",
   "scripts": {
