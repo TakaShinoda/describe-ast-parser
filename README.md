@@ -39,44 +39,71 @@ console.log(parse(readFileSync('src/test.spec.ts', 'utf8')))
 
 ```
 [
-  Node {
-    type: 'StringLiteral',
-    start: 9,
-    end: 23,
-    loc: SourceLocation {
-      start: [Position],
-      end: [Position],
-      filename: undefined,
-      identifierName: undefined
+  {
+    "type": "StringLiteral",
+    "start": 9,
+    "end": 23,
+    "loc": {
+      "start": {
+        "line": 1,
+        "column": 9,
+        "index": 9
+      },
+      "end": {
+        "line": 1,
+        "column": 23,
+        "index": 23
+      }
     },
-    extra: { rawValue: 'test.spec.ts', raw: "'test.spec.ts'" },
-    value: 'test.spec.ts'
+    "extra": {
+      "rawValue": "test.spec.ts",
+      "raw": "'test.spec.ts'"
+    },
+    "value": "test.spec.ts"
   },
-  Node {
-    type: 'StringLiteral',
-    start: 40,
-    end: 48,
-    loc: SourceLocation {
-      start: [Position],
-      end: [Position],
-      filename: undefined,
-      identifierName: undefined
+  {
+    "type": "StringLiteral",
+    "start": 40,
+    "end": 48,
+    "loc": {
+      "start": {
+        "line": 2,
+        "column": 7,
+        "index": 40
+      },
+      "end": {
+        "line": 2,
+        "column": 15,
+        "index": 48
+      }
     },
-    extra: { rawValue: 'test 1', raw: "'test 1'" },
-    value: 'test 1'
+    "extra": {
+      "rawValue": "test 1",
+      "raw": "'test 1'"
+    },
+    "value": "test 1"
   },
-  Node {
-    type: 'StringLiteral',
-    start: 117,
-    end: 125,
-    loc: SourceLocation {
-      start: [Position],
-      end: [Position],
-      filename: undefined,
-      identifierName: undefined
+  {
+    "type": "StringLiteral",
+    "start": 117,
+    "end": 125,
+    "loc": {
+      "start": {
+        "line": 6,
+        "column": 7,
+        "index": 117
+      },
+      "end": {
+        "line": 6,
+        "column": 15,
+        "index": 125
+      }
     },
-    extra: { rawValue: 'test 2', raw: "'test 2'" },
-    value: 'test 2'
+    "extra": {
+      "rawValue": "test 2",
+      "raw": "'test 2'"
+    },
+    "value": "test 2"
   }
 ]
 ```
