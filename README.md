@@ -14,7 +14,9 @@ npm i describe-ast-parser
 
 ## Usage
 
-```ts: test.spac.ts
+```ts
+// test.spec.ts
+
 describe('test.spec.ts', () => {
   test('test 1', () => {
     expect('Hello World').toBe('Hello World')
@@ -25,7 +27,10 @@ describe('test.spec.ts', () => {
   })
 })
 ```
-```ts: index.ts
+
+```ts
+// index.ts
+
 import { parse } from 'describe-ast-parser'
 import { readFileSync } from 'fs'
 
