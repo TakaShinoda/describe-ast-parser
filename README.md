@@ -1,6 +1,8 @@
 # describe-ast-parser
 
-![Static Badge](https://img.shields.io/badge/License-MIT-brightgreen)
+![NPM](https://img.shields.io/npm/l/describe-ast-parser)
+![npm](https://img.shields.io/npm/v/describe-ast-parser)
+
 
 Parses jest code to AST and extract nodes with `describe` and `test`
 
