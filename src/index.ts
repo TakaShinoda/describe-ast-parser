@@ -14,9 +14,8 @@ export const parse = (jestCode: string): t.Expression[] => {
     const { node } = path
 
     if (
-      (t.isIdentifier(node.callee, { name: 'describe' }) ||
-        t.isIdentifier(node.callee, { name: 'test' })) &&
-      node.arguments.length > 0
+      t.isIdentifier(node.callee, { name: 'describe' }) ||
+      t.isIdentifier(node.callee, { name: 'test' })
     ) {
       const arg = node.arguments[0]
       extractionNodes.push(arg as any)
