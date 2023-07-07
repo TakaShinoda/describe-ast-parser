@@ -5,6 +5,13 @@
   "main": "dist/index.js",
   "types": "src/index.ts",
   "type": "commonjs",
+  "files": [
+    "README.md",
+    "dist",
+    "src/index.ts",
+    "LICENSE",
+    "package.json"
+  ],
   "scripts": {
     "build": "tsc &&  babel src --out-dir dist",
     "format": "prettier --write --ignore-path .gitignore './**/*.{js,ts}'"
